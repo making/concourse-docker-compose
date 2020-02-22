@@ -1,7 +1,7 @@
 # Concourse + Vault on Docker Compose
 
 
-## Install
+## Install CLI
 
 ```
 brew install vault
