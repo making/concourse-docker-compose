@@ -1,3 +1,4 @@
 ca.pem
 cert.pem
 key.pem
+unseal-vault.sh
