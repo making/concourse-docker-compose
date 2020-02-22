@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  concourse-db:
+    image: postgres:11
+    environment:
+      POSTGRES_DB: concourse
+      POSTGRES_PASSWORD: concourse_pass
+      POSTGRES_USER: concourse_user
+      PGDATA: /database
+
+  concourse:
+    image: concourse/concourse:5.8-ubuntu
+    command: quickstart
+    privileged: true
+    depends_on:
+    - concourse-db
+    ports:
+    - 443:443
+    - 9391:9391
+    volumes:
+    - ./certs:/certs
+    environment:
+      CONCOURSE_POSTGRES_HOST: concourse-db
+      CONCOURSE_POSTGRES_USER: concourse_user
+      CONCOURSE_POSTGRES_PASSWORD: concourse_pass
+      CONCOURSE_POSTGRES_DATABASE: concourse
+      CONCOURSE_EXTERNAL_URL: https://concourse.localhost.ik.am
+      CONCOURSE_TLS_BIND_PORT: 443
+      CONCOURSE_TLS_CERT: /certs/cert.pem
+      CONCOURSE_TLS_KEY: /certs/key.pem
+      CONCOURSE_ADD_LOCAL_USER: test:test
+      CONCOURSE_MAIN_TEAM_LOCAL_USER: test
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: overlay
+      CONCOURSE_PROMETHEUS_BIND_IP: 0.0.0.0
+      CONCOURSE_PROMETHEUS_BIND_PORT: 9391
+      CONCOURSE_VAULT_URL: https://vault:8200
+      CONCOURSE_VAULT_AUTH_BACKEND: cert
+      CONCOURSE_VAULT_SERVER_NAME: vault.localhost.ik.am
+      CONCOURSE_VAULT_CA_CERT: /certs/ca.pem
+      CONCOURSE_VAULT_CLIENT_CERT: /certs/cert.pem
+      CONCOURSE_VAULT_CLIENT_KEY: /certs/key.pem
+
+  vault:
+    image: vault:1.3.2
+    cap_add:
+    - IPC_LOCK
+    ports:
+    - 8200:8200
+    volumes:
+    - ./certs:/vault/certs
+    - ./vault:/vault/config
+    command: server

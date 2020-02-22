@@ -1,0 +1,20 @@
+jobs:
+- name: hello-world
+  plan:
+  - task: say-hello
+    params:
+      SECRET: ((secret))
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: ubuntu
+          tag: bionic
+      run:
+        path: bash
+        args: 
+        - -c
+        - |
+          echo "Hello, ${SECRET}!"
+
