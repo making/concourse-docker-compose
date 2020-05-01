@@ -2,7 +2,9 @@ version: '3'
 
 services:
   concourse-db:
-    image: postgres:11
+    image: bitnami/postgresql:11.7.0-debian-10-r77
+    volumes:
+    - ./database:/database  
     environment:
       POSTGRES_DB: concourse
       POSTGRES_PASSWORD: concourse_pass
